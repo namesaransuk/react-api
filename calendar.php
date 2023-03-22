@@ -45,5 +45,21 @@ switch ($method) {
         echo json_encode($response);
         break;
     case "PUT":
+        $calendar = json_decode(file_get_contents('php://input'));
+        $sql = "UPDATE calendar SET title =:title, description =:description, start =:start, end =:end WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id', $calendar->id);
+        $stmt->bindParam(':title', $calendar->title);
+        $stmt->bindParam(':description', $calendar->description);
+        $stmt->bindParam(':start', $calendar->start);
+        $stmt->bindParam(':end', $calendar->end);
+
+        if ($stmt->execute()) {
+            $response = ['status' => 1, 'message' => 'Record updated successfully.'];
+        } else {
+            $response = ['status' => 0, 'message' => 'Failed to update record.'];
+        }
+        echo json_encode($response);
+        break;
     case "DELETE":
 }
